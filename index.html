@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plan Tracker</title>
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#534AB7">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Plan Tracker">
+<link rel="apple-touch-icon" href="./icon.svg">
+<style>
+  :root {
+    --bg: #f5f5f7;
+    --surface: #ffffff;
+    --surface2: #f0f0f2;
+    --border: #e0e0e5;
+    --text: #1a1a2e;
+    --text2: #555566;
+    --text3: #888899;
+    --accent: #534AB7;
+    --success: #1a7f4b;
+    --success-bg: #e8f5ee;
+    --danger: #cc2936;
+    --shadow: 0 1px 4px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.04);
+    --shadow-lg: 0 4px 24px rgba(0,0,0,0.12);
+    --radius: 14px;
+    --radius-sm: 8px;
+    --phase-purple: #534AB7;
+    --phase-teal: #0F6E56;
+    --phase-amber: #854F0B;
+    --phase-coral: #993C1D;
+    --phase-blue: #185FA5;
+    --phase-purple-bg: #eeedf8;
+    --phase-teal-bg: #e6f3ef;
+    --phase-amber-bg: #f5ede1;
+    --phase-coral-bg: #f5e8e4;
+    --phase-blue-bg: #e3edf8;
+    --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0e0e16;
+      --surface: #1a1a28;
+      --surface2: #22222f;
+      --border: #2e2e40;
+      --text: #eeeef5;
+      --text2: #aaaabd;
+      --text3: #666677;
+      --shadow: 0 1px 4px rgba(0,0,0,0.3), 0 4px 16px rgba(0,0,0,0.2);
+      --shadow-lg: 0 4px 24px rgba(0,0,0,0.4);
+      --phase-purple-bg: #1e1c3a;
+      --phase-teal-bg: #122820;
+      --phase-amber-bg: #2a1e0a;
+      --phase-coral-bg: #2a1510;
+      --phase-blue-bg: #0f1e30;
+      --success-bg: #0e2a1c;
+    }
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 16px; scroll-behavior: smooth; }
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100dvh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Screens ── */
+  .screen { display: none; min-height: 100dvh; }
+  .screen.active { display: flex; flex-direction: column; }
+
+  /* ── Home screen ── */
+  #home-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 20px 14px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  #home-header h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: var(--text);
+  }
+  #home-header .subtitle {
+    font-size: 0.78rem;
+    color: var(--text3);
+    margin-top: 2px;
+  }
+  #plans-list {
+    flex: 1;
+    padding: 16px 16px 100px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .empty-state {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text3);
+    gap: 8px;
+  }
+  .empty-state .icon { font-size: 3rem; margin-bottom: 4px; }
+  .empty-state h3 { font-size: 1.1rem; color: var(--text2); }
+  .empty-state p { font-size: 0.85rem; }
+
+  /* ── Plan card ── */
+  .plan-card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 16px;
+    box-shadow: var(--shadow);
+    cursor: pointer;
+    user-select: none;
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+    -webkit-tap-highlight-color: transparent;
+    position: relative;
+    border: 1px solid var(--border);
+  }
+  .plan-card:active { transform: scale(0.98); box-shadow: var(--shadow-lg); }
+  .plan-card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+  .plan-card-name { font-size: 1rem; font-weight: 600; color: var(--text); line-height: 1.3; }
+  .plan-card-date { font-size: 0.72rem; color: var(--text3); white-space: nowrap; margin-top: 2px; }
+  .plan-card-desc {
+    font-size: 0.8rem;
+    color: var(--text2);
+    margin-top: 6px;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .plan-card-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 12px;
+  }
+  .plan-card-stat {
+    font-size: 0.75rem;
+    color: var(--text3);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .plan-card-stat strong { color: var(--text2); }
+  .phase-progress-bar-wrap {
+    flex: 1;
+    background: var(--surface2);
+    border-radius: 99px;
+    height: 6px;
+    overflow: hidden;
+  }
+  .phase-progress-bar {
+    height: 100%;
+    border-radius: 99px;
+    background: var(--accent);
+    transition: width 0.4s ease;
+  }
+
+  /* ── FAB ── */
+  .fab {
+    position: fixed;
+    bottom: 24px;
+    right: 20px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    font-size: 1.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(83,74,183,0.4);
+    z-index: 20;
+    transition: transform 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .fab:active { transform: scale(0.92); }
+
+  /* ── Plan view ── */
+  #plan-sticky-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 16px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  #back-btn {
+    background: var(--surface2);
+    border: none;
+    border-radius: 8px;
+    padding: 6px 10px;
+    cursor: pointer;
+    color: var(--text);
+    font-size: 0.85rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+    transition: background 0.12s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  #back-btn:active { background: var(--border); }
+  #plan-header-info { flex: 1; min-width: 0; }
+  #plan-header-name {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  #plan-header-progress { font-size: 0.72rem; color: var(--text3); margin-top: 1px; }
+
+  #plan-body { flex: 1; padding: 0 0 100px; overflow-y: auto; }
+  #plan-title-section { padding: 20px 16px 4px; }
+  #plan-title-section h2 { font-size: 1.4rem; font-weight: 700; color: var(--text); }
+  #plan-title-section p { font-size: 0.85rem; color: var(--text2); margin-top: 6px; line-height: 1.5; }
+
+  /* ── Phase ── */
+  .phase-block {
+    margin: 16px 12px 0;
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+  }
+  .phase-header {
+    padding: 14px 16px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .phase-label-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .phase-badge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 99px;
+    color: #fff;
+  }
+  .phase-duration { font-size: 0.72rem; color: var(--text3); }
+  .phase-title { font-size: 1rem; font-weight: 700; color: var(--text); line-height: 1.25; }
+  .phase-progress-row { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+  .phase-prog-bar-wrap {
+    flex: 1;
+    background: rgba(0,0,0,0.08);
+    border-radius: 99px;
+    height: 5px;
+    overflow: hidden;
+  }
+  @media (prefers-color-scheme: dark) {
+    .phase-prog-bar-wrap { background: rgba(255,255,255,0.1); }
+  }
+  .phase-prog-bar {
+    height: 100%;
+    border-radius: 99px;
+    transition: width 0.4s ease;
+  }
+  .phase-prog-label { font-size: 0.7rem; color: var(--text3); white-space: nowrap; }
+
+  /* Steps */
+  .steps-list { padding: 0 12px 12px; background: var(--surface); display: flex; flex-direction: column; gap: 8px; }
+  .step-card {
+    background: var(--surface2);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    transition: box-shadow 0.12s;
+  }
+  .step-card.complete { border-color: var(--success); }
+  .step-card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+  .step-checkbox {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, border-color 0.15s;
+    cursor: pointer;
+    background: var(--surface);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .step-checkbox.checked {
+    background: var(--success);
+    border-color: var(--success);
+  }
+  .step-checkbox.checked::after {
+    content: '';
+    width: 6px;
+    height: 10px;
+    border: 2px solid #fff;
+    border-top: none;
+    border-left: none;
+    transform: rotate(45deg) translateY(-1px);
+    display: block;
+  }
+  .step-num {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--text3);
+    width: 22px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+  .step-name {
+    flex: 1;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.3;
+    transition: color 0.15s;
+  }
+  .step-card.complete .step-name {
+    text-decoration: line-through;
+    color: var(--text3);
+  }
+  .step-chevron {
+    font-size: 0.7rem;
+    color: var(--text3);
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+  }
+  .step-card.expanded .step-chevron { transform: rotate(180deg); }
+  .step-body {
+    padding: 0 12px 0 44px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+  }
+  .step-card.expanded .step-body {
+    max-height: 600px;
+    padding-bottom: 12px;
+  }
+  .step-bullets { list-style: none; display: flex; flex-direction: column; gap: 5px; margin-bottom: 10px; }
+  .step-bullets li {
+    font-size: 0.8rem;
+    color: var(--text2);
+    line-height: 1.45;
+    display: flex;
+    gap: 8px;
+  }
+  .step-bullets li::before { content: '·'; color: var(--text3); flex-shrink: 0; font-size: 1.2rem; line-height: 1; }
+  .deliverable-box {
+    background: var(--surface);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 6px 6px 0;
+    padding: 8px 10px;
+    font-size: 0.78rem;
+    color: var(--text2);
+    line-height: 1.4;
+  }
+  .deliverable-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text3);
+    margin-bottom: 3px;
+  }
+
+  /* Add step btn */
+  .add-step-btn {
+    margin: 0 12px 8px;
+    background: transparent;
+    border: 1.5px dashed var(--border);
+    border-radius: var(--radius-sm);
+    padding: 9px 14px;
+    font-size: 0.8rem;
+    color: var(--text3);
+    cursor: pointer;
+    width: calc(100% - 24px);
+    text-align: left;
+    font-family: var(--font);
+    transition: border-color 0.15s, color 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .add-step-btn:active { border-color: var(--accent); color: var(--accent); }
+
+  .add-phase-btn {
+    margin: 16px 12px 0;
+    background: var(--surface);
+    border: 1.5px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 14px;
+    font-size: 0.85rem;
+    color: var(--text2);
+    cursor: pointer;
+    width: calc(100% - 24px);
+    text-align: center;
+    font-family: var(--font);
+    font-weight: 500;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .add-phase-btn:active { border-color: var(--accent); color: var(--accent); background: var(--surface2); }
+
+  /* ── Modals ── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 100;
+    align-items: flex-end;
+    justify-content: center;
+    backdrop-filter: blur(2px);
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface);
+    border-radius: var(--radius) var(--radius) 0 0;
+    padding: 20px 20px 32px;
+    width: 100%;
+    max-width: 540px;
+    max-height: 90dvh;
+    overflow-y: auto;
+    animation: slideUp 0.25s ease;
+  }
+  @keyframes slideUp {
+    from { transform: translateY(60px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  .modal-handle {
+    width: 36px;
+    height: 4px;
+    background: var(--border);
+    border-radius: 99px;
+    margin: 0 auto 16px;
+  }
+  .modal h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 16px; color: var(--text); }
+  .form-group { margin-bottom: 14px; }
+  .form-group label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 5px;
+  }
+  .form-group input,
+  .form-group textarea {
+    width: 100%;
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    font-size: 0.9rem;
+    color: var(--text);
+    font-family: var(--font);
+    outline: none;
+    transition: border-color 0.15s;
+    -webkit-appearance: none;
+  }
+  .form-group input:focus,
+  .form-group textarea:focus { border-color: var(--accent); }
+  .form-group textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
+  .form-hint { font-size: 0.72rem; color: var(--text3); margin-top: 4px; }
+  .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+  .btn {
+    flex: 1;
+    padding: 12px;
+    border-radius: var(--radius-sm);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    font-family: var(--font);
+    transition: opacity 0.12s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn:active { opacity: 0.8; }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+
+  /* ── Confirm dialog ── */
+  .confirm-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    backdrop-filter: blur(2px);
+  }
+  .confirm-overlay.open { display: flex; }
+  .confirm-box {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 24px 20px 20px;
+    width: 100%;
+    max-width: 320px;
+    box-shadow: var(--shadow-lg);
+    text-align: center;
+    animation: popIn 0.2s ease;
+  }
+  @keyframes popIn {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  .confirm-box h4 { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+  .confirm-box p { font-size: 0.85rem; color: var(--text2); margin-bottom: 20px; line-height: 1.4; }
+  .confirm-actions { display: flex; gap: 10px; }
+  .btn-danger { background: var(--danger); color: #fff; }
+
+  /* ── Context menu ── */
+  .ctx-menu {
+    display: none;
+    position: fixed;
+    background: var(--surface);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border);
+    z-index: 150;
+    min-width: 160px;
+    overflow: hidden;
+    animation: fadeIn 0.1s ease;
+  }
+  .ctx-menu.open { display: block; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .ctx-menu button {
+    display: block;
+    width: 100%;
+    padding: 12px 16px;
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    font-size: 0.88rem;
+    color: var(--danger);
+    font-family: var(--font);
+    font-weight: 500;
+  }
+  .ctx-menu button:active { background: var(--surface2); }
+
+  /* Phase colour helpers */
+  .pc-0 { background: var(--phase-purple); }
+  .pc-1 { background: var(--phase-teal); }
+  .pc-2 { background: var(--phase-amber); }
+  .pc-3 { background: var(--phase-coral); }
+  .pc-4 { background: var(--phase-blue); }
+  .ph-0 { background: var(--phase-purple-bg); }
+  .ph-1 { background: var(--phase-teal-bg); }
+  .ph-2 { background: var(--phase-amber-bg); }
+  .ph-3 { background: var(--phase-coral-bg); }
+  .ph-4 { background: var(--phase-blue-bg); }
+
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+
+  /* ── Update banner ── */
+  .update-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--success);
+    color: #fff;
+    padding: 14px 20px;
+    text-align: center;
+    font-size: 0.88rem;
+    font-weight: 600;
+    z-index: 400;
+    cursor: pointer;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+    letter-spacing: 0.01em;
+  }
+  .update-banner.show { transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════ HOME SCREEN ════════════════════════════════ -->
+<div id="screen-home" class="screen active">
+  <div id="home-header">
+    <h1>Plan Tracker</h1>
+    <div class="subtitle">Your plans, your progress</div>
+  </div>
+  <div id="plans-list"></div>
+  <button class="fab" id="new-plan-fab" title="New Plan" aria-label="New Plan">+</button>
+</div>
+
+<!-- ════════════════════════════════ PLAN SCREEN ════════════════════════════════ -->
+<div id="screen-plan" class="screen">
+  <div id="plan-sticky-header">
+    <button id="back-btn">&#8592; Back</button>
+    <div id="plan-header-info">
+      <div id="plan-header-name"></div>
+      <div id="plan-header-progress"></div>
+    </div>
+  </div>
+  <div id="plan-body">
+    <div id="plan-title-section">
+      <h2 id="plan-view-name"></h2>
+      <p id="plan-view-desc"></p>
+    </div>
+    <div id="phases-container"></div>
+    <button class="add-phase-btn" id="add-phase-btn">+ Add Phase</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════ MODALS ════════════════════════════════ -->
+
+<!-- New Plan Modal -->
+<div class="modal-overlay" id="modal-new-plan">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-new-plan-title">
+    <div class="modal-handle"></div>
+    <h3 id="modal-new-plan-title">New Plan</h3>
+    <div class="form-group">
+      <label for="input-plan-name">Plan name</label>
+      <input type="text" id="input-plan-name" placeholder="e.g. Product Launch Roadmap" autocomplete="off">
+    </div>
+    <div class="form-group">
+      <label for="input-plan-desc">Description <span style="font-weight:400;text-transform:none">(optional)</span></label>
+      <textarea id="input-plan-desc" placeholder="What is this plan about?"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="cancel-new-plan">Cancel</button>
+      <button class="btn btn-primary" id="confirm-new-plan">Create Plan</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Phase Modal -->
+<div class="modal-overlay" id="modal-add-phase">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-add-phase-title">
+    <div class="modal-handle"></div>
+    <h3 id="modal-add-phase-title">Add Phase</h3>
+    <div class="form-group">
+      <label for="input-phase-label">Phase label</label>
+      <input type="text" id="input-phase-label" placeholder="e.g. Phase 1" autocomplete="off">
+    </div>
+    <div class="form-group">
+      <label for="input-phase-title">Phase title</label>
+      <input type="text" id="input-phase-title" placeholder="e.g. Discovery & Validation" autocomplete="off">
+    </div>
+    <div class="form-group">
+      <label for="input-phase-duration">Duration</label>
+      <input type="text" id="input-phase-duration" placeholder="e.g. Weeks 1–3" autocomplete="off">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="cancel-add-phase">Cancel</button>
+      <button class="btn btn-primary" id="confirm-add-phase">Add Phase</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Step Modal -->
+<div class="modal-overlay" id="modal-add-step">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-add-step-title">
+    <div class="modal-handle"></div>
+    <h3 id="modal-add-step-title">Add Step</h3>
+    <div class="form-group">
+      <label for="input-step-num">Step number</label>
+      <input type="text" id="input-step-num" placeholder="e.g. 01" autocomplete="off">
+    </div>
+    <div class="form-group">
+      <label for="input-step-name">Step name</label>
+      <input type="text" id="input-step-name" placeholder="e.g. Run discovery interviews" autocomplete="off">
+    </div>
+    <div class="form-group">
+      <label for="input-step-bullets">Bullet points</label>
+      <textarea id="input-step-bullets" placeholder="One bullet point per line"></textarea>
+      <div class="form-hint">Each line becomes a bullet point</div>
+    </div>
+    <div class="form-group">
+      <label for="input-step-deliverable">Deliverable</label>
+      <input type="text" id="input-step-deliverable" placeholder="e.g. Report delivered to stakeholders" autocomplete="off">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="cancel-add-step">Cancel</button>
+      <button class="btn btn-primary" id="confirm-add-step">Add Step</button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirm -->
+<div class="confirm-overlay" id="confirm-delete">
+  <div class="confirm-box">
+    <h4>Delete plan?</h4>
+    <p id="confirm-delete-msg">This will permanently delete the plan and all its data.</p>
+    <div class="confirm-actions">
+      <button class="btn btn-secondary" id="cancel-delete">Cancel</button>
+      <button class="btn btn-danger" id="ok-delete">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- Update banner -->
+<div class="update-banner" id="update-banner">App updated — tap to reload</div>
+
+<!-- Context menu -->
+<div class="ctx-menu" id="ctx-menu">
+  <button id="ctx-delete-btn">&#128465; Delete plan</button>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════════════════
+   DATA LAYER
+══════════════════════════════════════════════════════════ */
+const STORE_KEY = 'plantracker_data';
+
+function uid() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+}
+
+function loadData() {
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch (e) {}
+  return null;
+}
+
+function saveData(data) {
+  localStorage.setItem(STORE_KEY, JSON.stringify(data));
+}
+
+function initData() {
+  const existing = loadData();
+  if (existing) return existing;
+  const data = { plans: [buildNonprofitPlan()] };
+  saveData(data);
+  return data;
+}
+
+/* ══════════════════════════════════════════════════════════
+   PRELOADED PLAN
+══════════════════════════════════════════════════════════ */
+function buildNonprofitPlan() {
+  function step(num, name, bullets, deliverable) {
+    return { id: uid(), num, name, bullets, deliverable, complete: false };
+  }
+  function phase(label, title, duration, steps) {
+    return { id: uid(), label, title, duration, steps };
+  }
+
+  return {
+    id: uid(),
+    name: 'Nonprofit SaaS Roadmap',
+    description: 'Building an AI-powered operations tool for small nonprofits. From volunteer access to first revenue.',
+    createdAt: new Date().toISOString(),
+    phases: [
+      phase('Phase 1', 'Discovery & validation', 'Weeks 1–3', [
+        step('01', 'Enter both charities as a volunteer', [
+          'Reach out to Sivan Arul Foundation and Vanni Hope this week — offer skills with zero pitch attached',
+          'Use Tamil language learning as a cultural bridge — diaspora orgs notice this',
+          'Goal is access, not a sale — watch, listen, and map how they work'
+        ], 'Two active volunteer relationships established by end of week 2'),
+        step('02', 'Run a live operational audit inside each org', [
+          'Map every tool they use: email, spreadsheets, donor platforms, social media',
+          'Note every task involving copying, pasting, rewriting, or chasing — these are AI automation targets',
+          'Key question: "What takes the most time that feels like it shouldn\'t?"',
+          'Do this independently for both orgs — overlapping pain = universal problem'
+        ], 'Pain map — top 5 time sinks ranked by frequency and frustration'),
+        step('03', 'Run one unrelated discovery call', [
+          'Find a structurally different org — environmental, Indigenous, domestic violence support, refugee services',
+          'LinkedIn: search "grants coordinator" or "program manager nonprofit Australia"',
+          'Script: "I\'m building a tool for small nonprofits. 20 mins — tell me what\'s hardest about your job?"',
+          'If pain points match your Tamil orgs, you\'re building something universal'
+        ], 'Confirmed that core pain is sector-wide, not community-specific')
+      ]),
+      phase('Phase 2', 'Define & design', 'Weeks 3–5', [
+        step('04', 'Write your problem statement', [
+          'One page: who feels the pain, what it is, how they deal with it badly, what it costs them',
+          'Format: "Small nonprofit staff (2–10 people) spend X hours/week on [task]. They use [bad solution]. We fix this by..."',
+          'This is your north star — every product decision gets checked against it'
+        ], 'One-page problem statement signed off by at least one real nonprofit contact'),
+        step('05', 'Choose your beachhead feature', [
+          'Beachhead = the single thing your MVP does better than anything they currently use',
+          'Most likely candidate: AI grant proposal writer — high pain, high stakes, no good existing tool for small orgs',
+          'Shortlist everything else into V2: donor CRM, impact dashboards, event planning',
+          'Rule: if a user can\'t get value in under 10 minutes, cut more'
+        ], 'MVP feature list — one primary feature, max three supporting features'),
+        step('06', 'Wireframe the dashboard', [
+          'Rough sketch of screens, buttons, and flows before any code is written',
+          'Use Figma (free) or paper — get the layout out of your head',
+          'Show it to charity contacts: "Does this make sense? What\'s confusing?"',
+          'Validate with a real user before a single line of production code'
+        ], 'Clickable wireframe validated by at least one nonprofit staff member')
+      ]),
+      phase('Phase 3', 'Build the MVP', 'Weeks 5–10', [
+        step('07', 'Set up your tech stack', [
+          'Frontend: React + Tailwind (carry over from PropIntel)',
+          'Backend + database: Supabase — auth, database, and row-level security out of the box',
+          'AI layer: Claude API (Anthropic) — better than GPT for long-form writing like grant proposals',
+          'Payments: Stripe — handles subscriptions, trials, and invoices automatically',
+          'Hosting: Vercel + Supabase. Monthly cost before revenue: ~AU$0–$30'
+        ], 'Repo created, Supabase project running, local dev environment working'),
+        step('08', 'Build auth and multi-tenant architecture', [
+          'Multi-tenant = multiple orgs on one platform, each seeing only their own data',
+          'Supabase row-level security (RLS) handles this — every row has an org_id',
+          'Auth: Supabase Auth with email/password + Google OAuth. ~2 hours to set up',
+          'Build org invite flow — one admin can invite other staff members'
+        ], 'Two test orgs can log in and see only their own data'),
+        step('09', 'Build the beachhead feature', [
+          'Grant writer: user inputs org mission + funder details → Claude generates draft → user edits → exports PDF/Word',
+          'Prompt engineer the Claude API call — system prompt should encode nonprofit context and Australian grant conventions',
+          'Track generations per user for usage-based limits on the free tier',
+          'Build a "saved drafts" view — users iterate, not just generate once'
+        ], 'End-to-end working feature — generate, edit, save, export'),
+        step('10', 'Add Stripe billing', [
+          'Three tiers: Starter (free, 5 AI uses/month) | Growth (AU$49/mo, unlimited) | Organisation (AU$149/mo, all features)',
+          'Stripe Checkout handles the payment page — you redirect to it, not build it',
+          'Stripe webhooks update Supabase on subscribe, upgrade, or cancel',
+          'Add nonprofit discount code (30% off) for ACNC-verified orgs — verify manually at first'
+        ], 'Someone can sign up, pay, and get upgraded access automatically')
+      ]),
+      phase('Phase 4', 'Beta & first revenue', 'Weeks 10–16', [
+        step('11', 'Give Sivan Arul & Vanni Hope free beta access', [
+          'Pitch: "I\'ve built something for orgs like yours. Free forever in exchange for honest weekly feedback."',
+          'Onboard them personally — sit with them, watch them use it, note every moment of confusion',
+          'Track: time saved per week, tasks completed, what tools they stop using',
+          'These are founding partners — give them a permanent founding partner badge in the product'
+        ], 'Both orgs actively using the product weekly with documented outcomes'),
+        step('12', 'Recruit 8 more beta orgs', [
+          'Target: 2 environmental, 2 domestic/community, 2 international development, 2 health/disability',
+          'Channels: Reddit r/nonprofit, TechSoup community, LinkedIn outreach to grants managers',
+          'Offer: 3 months free access in exchange for a 30-minute monthly feedback call',
+          '10 beta orgs gives you enough signal before charging anyone'
+        ], '10 active beta users across at least 4 different org types'),
+        step('13', 'Convert betas to paying customers', [
+          'After 6–8 weeks, email: "Your free period ends in 2 weeks. Here\'s what you saved. Ready to continue?"',
+          'Beta-to-paid discount: first 3 months at 50% off',
+          'Target: 3–5 paying customers from the initial 10',
+          'AU$49/mo × 5 customers = AU$245 MRR — small but real proof of concept'
+        ], 'First dollar of MRR. Screenshot it.')
+      ]),
+      phase('Phase 5', 'Scale & systematise', 'Month 5 onwards', [
+        step('14', 'Public launch', [
+          'Product Hunt: post Tuesday or Wednesday morning (US time) for maximum visibility',
+          'TechSoup listing: apply as a discounted tech vendor for nonprofits',
+          'LinkedIn launch post: tell the story behind building with Tamil charities',
+          'Target: 50 signups in launch week, 10% conversion = 5 new paying customers'
+        ], 'Public URL live, listed on Product Hunt and TechSoup'),
+        step('15', 'Build your case studies', [
+          'Formula: org name + problem + how they used the product + measurable outcome',
+          'Get quotes from Sivan Arul and Vanni Hope contacts — most powerful sales asset',
+          'Publish as a dedicated page on your site and link everywhere'
+        ], 'Two published case studies with real numbers and real quotes'),
+        step('16', 'Ship V2 features based on real feedback', [
+          'V2 candidates: impact reporting dashboard, donor comms templates, event planning assistant',
+          'Prioritise what beta users actually requested, not assumed needs',
+          'Add integrations: Mailchimp, Xero, Google Workspace'
+        ], 'V2 shipped with at least two features directly requested by beta users'),
+        step('17', 'Target AU$2K MRR by month 8', [
+          'MRR = monthly recurring revenue — the most important SaaS metric',
+          'AU$2K MRR = ~40 Growth customers or ~14 Organisation customers or a mix',
+          'AU$10K MRR target by month 18 = a real business alongside your other income streams'
+        ], 'Revenue dashboard showing MRR trend — screenshot it monthly')
+      ])
+    ]
+  };
+}
+
+/* ══════════════════════════════════════════════════════════
+   APP STATE
+══════════════════════════════════════════════════════════ */
+let db = initData();
+let currentPlanId = null;
+let pendingDeleteId = null;
+let pendingPhaseId = null; // which phase the "add step" modal is targeting
+
+/* ══════════════════════════════════════════════════════════
+   UTILITIES
+══════════════════════════════════════════════════════════ */
+const PHASE_COLORS = ['#534AB7', '#0F6E56', '#854F0B', '#993C1D', '#185FA5'];
+const PHASE_IDX = [0, 1, 2, 3, 4];
+
+function phaseIdx(i) { return i % 5; }
+
+function getPlan(id) { return db.plans.find(p => p.id === id); }
+
+function planStats(plan) {
+  let totalSteps = 0, doneSteps = 0, totalPhases = plan.phases.length, donePhases = 0;
+  for (const ph of plan.phases) {
+    const done = ph.steps.filter(s => s.complete).length;
+    totalSteps += ph.steps.length;
+    doneSteps += done;
+    if (ph.steps.length > 0 && done === ph.steps.length) donePhases++;
+  }
+  return { totalSteps, doneSteps, totalPhases, donePhases };
+}
+
+function formatDate(iso) {
+  const d = new Date(iso);
+  return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+function esc(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+/* ══════════════════════════════════════════════════════════
+   SCREEN ROUTING
+══════════════════════════════════════════════════════════ */
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+/* ══════════════════════════════════════════════════════════
+   HOME SCREEN
+══════════════════════════════════════════════════════════ */
+function renderHome() {
+  const list = document.getElementById('plans-list');
+  list.innerHTML = '';
+
+  if (db.plans.length === 0) {
+    list.innerHTML = `
+      <div class="empty-state">
+        <div class="icon">&#128203;</div>
+        <h3>No plans yet</h3>
+        <p>Tap + to create your first plan</p>
+      </div>`;
+    return;
+  }
+
+  for (const plan of db.plans) {
+    const st = planStats(plan);
+    const pct = st.totalPhases > 0 ? Math.round((st.donePhases / st.totalPhases) * 100) : 0;
+
+    const card = document.createElement('div');
+    card.className = 'plan-card';
+    card.dataset.id = plan.id;
+    card.innerHTML = `
+      <div class="plan-card-header">
+        <div class="plan-card-name">${esc(plan.name)}</div>
+        <div class="plan-card-date">${formatDate(plan.createdAt)}</div>
+      </div>
+      ${plan.description ? `<div class="plan-card-desc">${esc(plan.description)}</div>` : ''}
+      <div class="plan-card-meta">
+        <div class="plan-card-stat"><strong>${st.donePhases}/${st.totalPhases}</strong> phases</div>
+        <div class="phase-progress-bar-wrap">
+          <div class="phase-progress-bar" style="width:${pct}%"></div>
+        </div>
+        <div class="plan-card-stat"><strong>${st.doneSteps}/${st.totalSteps}</strong> steps</div>
+      </div>`;
+
+    card.addEventListener('click', () => openPlan(plan.id));
+
+    // Long-press
+    let pressTimer;
+    card.addEventListener('touchstart', e => {
+      pressTimer = setTimeout(() => showCtxMenu(plan.id, e.touches[0].clientX, e.touches[0].clientY), 500);
+    }, { passive: true });
+    card.addEventListener('touchend', () => clearTimeout(pressTimer));
+    card.addEventListener('touchmove', () => clearTimeout(pressTimer), { passive: true });
+    card.addEventListener('contextmenu', e => {
+      e.preventDefault();
+      showCtxMenu(plan.id, e.clientX, e.clientY);
+    });
+
+    list.appendChild(card);
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   PLAN VIEW
+══════════════════════════════════════════════════════════ */
+function openPlan(id) {
+  currentPlanId = id;
+  renderPlan();
+  showScreen('screen-plan');
+  document.getElementById('plan-body').scrollTop = 0;
+}
+
+function renderPlan() {
+  const plan = getPlan(currentPlanId);
+  if (!plan) return;
+
+  const st = planStats(plan);
+  document.getElementById('plan-header-name').textContent = plan.name;
+  document.getElementById('plan-header-progress').textContent =
+    `${st.doneSteps} of ${st.totalSteps} steps complete`;
+  document.getElementById('plan-view-name').textContent = plan.name;
+  document.getElementById('plan-view-desc').textContent = plan.description || '';
+
+  const container = document.getElementById('phases-container');
+  container.innerHTML = '';
+
+  plan.phases.forEach((phase, pi) => {
+    const ci = phaseIdx(pi);
+    const color = PHASE_COLORS[ci];
+    const doneSteps = phase.steps.filter(s => s.complete).length;
+    const totalSteps = phase.steps.length;
+    const pct = totalSteps > 0 ? Math.round((doneSteps / totalSteps) * 100) : 0;
+
+    const block = document.createElement('div');
+    block.className = `phase-block`;
+    block.dataset.phaseId = phase.id;
+
+    block.innerHTML = `
+      <div class="phase-header ph-${ci}">
+        <div class="phase-label-row">
+          <span class="phase-badge pc-${ci}">${esc(phase.label)}</span>
+          <span class="phase-duration">${esc(phase.duration)}</span>
+        </div>
+        <div class="phase-title">${esc(phase.title)}</div>
+        <div class="phase-progress-row">
+          <div class="phase-prog-bar-wrap">
+            <div class="phase-prog-bar pc-${ci}" style="width:${pct}%"></div>
+          </div>
+          <span class="phase-prog-label">${doneSteps}/${totalSteps} steps</span>
+        </div>
+      </div>
+      <div class="steps-list" id="steps-${phase.id}"></div>
+      <button class="add-step-btn" data-phase-id="${phase.id}">+ Add step</button>
+    `;
+
+    const stepsList = block.querySelector(`#steps-${phase.id}`);
+    phase.steps.forEach(step => {
+      stepsList.appendChild(buildStepEl(step, phase.id, color, ci));
+    });
+
+    block.querySelector('.add-step-btn').addEventListener('click', () => {
+      openAddStepModal(phase.id, phase.steps.length);
+    });
+
+    container.appendChild(block);
+  });
+}
+
+function buildStepEl(step, phaseId, color, ci) {
+  const card = document.createElement('div');
+  card.className = `step-card${step.complete ? ' complete' : ''}`;
+  card.dataset.stepId = step.id;
+
+  const bulletsHtml = step.bullets.map(b => `<li>${esc(b)}</li>`).join('');
+
+  card.innerHTML = `
+    <div class="step-card-header">
+      <div class="step-checkbox${step.complete ? ' checked' : ''}" role="checkbox" aria-checked="${step.complete}" tabindex="0" data-phase-id="${phaseId}" data-step-id="${step.id}"></div>
+      <span class="step-num">${esc(step.num)}</span>
+      <span class="step-name">${esc(step.name)}</span>
+      <span class="step-chevron">&#9660;</span>
+    </div>
+    <div class="step-body">
+      ${bulletsHtml ? `<ul class="step-bullets">${bulletsHtml}</ul>` : ''}
+      ${step.deliverable ? `
+        <div class="deliverable-box">
+          <div class="deliverable-label">Deliverable</div>
+          ${esc(step.deliverable)}
+        </div>` : ''}
+    </div>`;
+
+  const header = card.querySelector('.step-card-header');
+  const checkbox = card.querySelector('.step-checkbox');
+
+  // Toggle expand (click on header but not checkbox)
+  header.addEventListener('click', e => {
+    if (e.target === checkbox || checkbox.contains(e.target)) return;
+    card.classList.toggle('expanded');
+  });
+
+  // Checkbox toggle
+  function toggleStep() {
+    step.complete = !step.complete;
+    saveData(db);
+    checkbox.classList.toggle('checked', step.complete);
+    checkbox.setAttribute('aria-checked', step.complete);
+    card.classList.toggle('complete', step.complete);
+    // Update plan header progress
+    const plan = getPlan(currentPlanId);
+    const st = planStats(plan);
+    document.getElementById('plan-header-progress').textContent =
+      `${st.doneSteps} of ${st.totalSteps} steps complete`;
+    // Update phase progress bar
+    const phaseBlock = card.closest('.phase-block');
+    const phase = plan.phases.find(ph => ph.id === phaseId);
+    if (phase && phaseBlock) {
+      const done = phase.steps.filter(s => s.complete).length;
+      const total = phase.steps.length;
+      const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+      const bar = phaseBlock.querySelector('.phase-prog-bar');
+      const label = phaseBlock.querySelector('.phase-prog-label');
+      if (bar) bar.style.width = pct + '%';
+      if (label) label.textContent = `${done}/${total} steps`;
+    }
+  }
+
+  checkbox.addEventListener('click', e => { e.stopPropagation(); toggleStep(); });
+  checkbox.addEventListener('keydown', e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); toggleStep(); } });
+
+  return card;
+}
+
+function updatePlanHeaderStats() {
+  const plan = getPlan(currentPlanId);
+  if (!plan) return;
+  const st = planStats(plan);
+  document.getElementById('plan-header-progress').textContent =
+    `${st.doneSteps} of ${st.totalSteps} steps complete`;
+}
+
+/* ══════════════════════════════════════════════════════════
+   CONTEXT MENU (delete)
+══════════════════════════════════════════════════════════ */
+const ctxMenu = document.getElementById('ctx-menu');
+let ctxTargetId = null;
+
+function showCtxMenu(planId, x, y) {
+  ctxTargetId = planId;
+  ctxMenu.style.left = Math.min(x, window.innerWidth - 180) + 'px';
+  ctxMenu.style.top = Math.min(y, window.innerHeight - 80) + 'px';
+  ctxMenu.classList.add('open');
+}
+
+function hideCtxMenu() { ctxMenu.classList.remove('open'); }
+
+document.getElementById('ctx-delete-btn').addEventListener('click', () => {
+  hideCtxMenu();
+  confirmDelete(ctxTargetId);
+});
+
+document.addEventListener('click', e => {
+  if (!ctxMenu.contains(e.target)) hideCtxMenu();
+});
+
+/* ══════════════════════════════════════════════════════════
+   DELETE CONFIRM
+══════════════════════════════════════════════════════════ */
+function confirmDelete(planId) {
+  pendingDeleteId = planId;
+  const plan = getPlan(planId);
+  document.getElementById('confirm-delete-msg').textContent =
+    `"${plan ? plan.name : 'This plan'}" will be permanently deleted.`;
+  document.getElementById('confirm-delete').classList.add('open');
+}
+
+document.getElementById('cancel-delete').addEventListener('click', () => {
+  document.getElementById('confirm-delete').classList.remove('open');
+  pendingDeleteId = null;
+});
+
+document.getElementById('ok-delete').addEventListener('click', () => {
+  if (pendingDeleteId) {
+    db.plans = db.plans.filter(p => p.id !== pendingDeleteId);
+    saveData(db);
+    renderHome();
+  }
+  document.getElementById('confirm-delete').classList.remove('open');
+  pendingDeleteId = null;
+});
+
+/* ══════════════════════════════════════════════════════════
+   NEW PLAN MODAL
+══════════════════════════════════════════════════════════ */
+document.getElementById('new-plan-fab').addEventListener('click', () => {
+  document.getElementById('input-plan-name').value = '';
+  document.getElementById('input-plan-desc').value = '';
+  document.getElementById('modal-new-plan').classList.add('open');
+  setTimeout(() => document.getElementById('input-plan-name').focus(), 100);
+});
+
+document.getElementById('cancel-new-plan').addEventListener('click', () => {
+  document.getElementById('modal-new-plan').classList.remove('open');
+});
+
+document.getElementById('modal-new-plan').addEventListener('click', e => {
+  if (e.target === document.getElementById('modal-new-plan'))
+    document.getElementById('modal-new-plan').classList.remove('open');
+});
+
+document.getElementById('confirm-new-plan').addEventListener('click', () => {
+  const name = document.getElementById('input-plan-name').value.trim();
+  if (!name) { document.getElementById('input-plan-name').focus(); return; }
+  const desc = document.getElementById('input-plan-desc').value.trim();
+  const plan = { id: uid(), name, description: desc, createdAt: new Date().toISOString(), phases: [] };
+  db.plans.unshift(plan);
+  saveData(db);
+  document.getElementById('modal-new-plan').classList.remove('open');
+  renderHome();
+  openPlan(plan.id);
+});
+
+document.getElementById('input-plan-name').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('confirm-new-plan').click();
+});
+
+/* ══════════════════════════════════════════════════════════
+   ADD PHASE MODAL
+══════════════════════════════════════════════════════════ */
+document.getElementById('add-phase-btn').addEventListener('click', () => {
+  const plan = getPlan(currentPlanId);
+  const nextNum = plan ? plan.phases.length + 1 : 1;
+  document.getElementById('input-phase-label').value = `Phase ${nextNum}`;
+  document.getElementById('input-phase-title').value = '';
+  document.getElementById('input-phase-duration').value = '';
+  document.getElementById('modal-add-phase').classList.add('open');
+  setTimeout(() => document.getElementById('input-phase-title').focus(), 100);
+});
+
+document.getElementById('cancel-add-phase').addEventListener('click', () => {
+  document.getElementById('modal-add-phase').classList.remove('open');
+});
+
+document.getElementById('modal-add-phase').addEventListener('click', e => {
+  if (e.target === document.getElementById('modal-add-phase'))
+    document.getElementById('modal-add-phase').classList.remove('open');
+});
+
+document.getElementById('confirm-add-phase').addEventListener('click', () => {
+  const label = document.getElementById('input-phase-label').value.trim();
+  const title = document.getElementById('input-phase-title').value.trim();
+  const duration = document.getElementById('input-phase-duration').value.trim();
+  if (!title) { document.getElementById('input-phase-title').focus(); return; }
+  const plan = getPlan(currentPlanId);
+  if (!plan) return;
+  plan.phases.push({ id: uid(), label: label || `Phase ${plan.phases.length + 1}`, title, duration, steps: [] });
+  saveData(db);
+  document.getElementById('modal-add-phase').classList.remove('open');
+  renderPlan();
+});
+
+/* ══════════════════════════════════════════════════════════
+   ADD STEP MODAL
+══════════════════════════════════════════════════════════ */
+function openAddStepModal(phaseId, currentStepCount) {
+  pendingPhaseId = phaseId;
+  const num = String(currentStepCount + 1).padStart(2, '0');
+  document.getElementById('input-step-num').value = num;
+  document.getElementById('input-step-name').value = '';
+  document.getElementById('input-step-bullets').value = '';
+  document.getElementById('input-step-deliverable').value = '';
+  document.getElementById('modal-add-step').classList.add('open');
+  setTimeout(() => document.getElementById('input-step-name').focus(), 100);
+}
+
+document.getElementById('cancel-add-step').addEventListener('click', () => {
+  document.getElementById('modal-add-step').classList.remove('open');
+  pendingPhaseId = null;
+});
+
+document.getElementById('modal-add-step').addEventListener('click', e => {
+  if (e.target === document.getElementById('modal-add-step'))
+    document.getElementById('modal-add-step').classList.remove('open');
+});
+
+document.getElementById('confirm-add-step').addEventListener('click', () => {
+  const num = document.getElementById('input-step-num').value.trim();
+  const name = document.getElementById('input-step-name').value.trim();
+  if (!name) { document.getElementById('input-step-name').focus(); return; }
+  const bulletsRaw = document.getElementById('input-step-bullets').value;
+  const bullets = bulletsRaw.split('\n').map(b => b.trim()).filter(Boolean);
+  const deliverable = document.getElementById('input-step-deliverable').value.trim();
+
+  const plan = getPlan(currentPlanId);
+  if (!plan || !pendingPhaseId) return;
+  const phase = plan.phases.find(ph => ph.id === pendingPhaseId);
+  if (!phase) return;
+
+  phase.steps.push({ id: uid(), num: num || String(phase.steps.length + 1).padStart(2, '0'), name, bullets, deliverable, complete: false });
+  saveData(db);
+  document.getElementById('modal-add-step').classList.remove('open');
+  pendingPhaseId = null;
+  renderPlan();
+});
+
+/* ══════════════════════════════════════════════════════════
+   BACK BUTTON
+══════════════════════════════════════════════════════════ */
+document.getElementById('back-btn').addEventListener('click', () => {
+  currentPlanId = null;
+  renderHome();
+  showScreen('screen-home');
+});
+
+/* ══════════════════════════════════════════════════════════
+   INIT
+══════════════════════════════════════════════════════════ */
+renderHome();
+
+/* ══════════════════════════════════════════════════════════
+   SERVICE WORKER — auto-update when new version deployed
+══════════════════════════════════════════════════════════ */
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').catch(() => {});
+
+  let refreshing = false;
+  // Fires when a new SW takes control (skipWaiting + clients.claim)
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (refreshing) return;
+    refreshing = true;
+    // If app is backgrounded, silently reload; otherwise show banner
+    if (document.visibilityState === 'hidden') {
+      window.location.reload();
+    } else {
+      const banner = document.getElementById('update-banner');
+      banner.classList.add('show');
+      banner.addEventListener('click', () => window.location.reload(), { once: true });
+    }
+  });
+}
+</script>
+</body>
+</html>
