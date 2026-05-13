@@ -767,7 +767,7 @@ function saveData(data) {
 function initData() {
   const existing = loadData();
   if (existing) return existing;
-  const data = { plans: [buildNonprofitPlan()] };
+  const data = { plans: [buildMaritimePlan(), buildNonprofitPlan()] };
   saveData(data);
   return data;
 }
@@ -896,6 +896,180 @@ function buildNonprofitPlan() {
           'AU$2K MRR = ~40 Growth customers or ~14 Organisation customers or a mix',
           'AU$10K MRR target by month 18 = a real business alongside your other income streams'
         ], 'Revenue dashboard showing MRR trend — screenshot it monthly')
+      ])
+    ]
+  };
+}
+
+function buildMaritimePlan() {
+  function step(num, name, bullets, deliverable) {
+    return { id: uid(), num, name, bullets, deliverable, complete: false };
+  }
+  function phase(label, title, duration, steps) {
+    return { id: uid(), label, title, duration, steps };
+  }
+
+  return {
+    id: uid(),
+    name: 'Maritime Archaeology Career',
+    description: 'A decade of work across the Mediterranean, Indo-Pacific, East Africa, and the Pacific. Each phase plants you at a different site on the planet — credentials, diving, and fieldwork compounding together toward independent practice.',
+    createdAt: new Date().toISOString(),
+    phases: [
+      phase('Phase 1', 'Foundation', 'Now → End 2027 | Adelaide, Australia', [
+        step('01', 'Complete Bachelor of Politics & International Relations', [
+          'Location: Adelaide, SA — OUA online while posted at RAAF Base Edinburgh',
+          'The IR and postcolonial theory frameworks apply directly to UNESCO heritage law and jurisdictional disputes in the Indo-Pacific — this degree earns its keep in the field, not in an office',
+          'Finish every unit — it\'s the academic entry ticket to Flinders and the credential that opens UNESCO P-2 applications'
+        ], 'Bachelor\'s degree conferred by December 2027, Adelaide'),
+        step('02', 'Get PADI Open Water + Advanced certified', [
+          'Location: Adelaide — Rapid Bay jetty, Port Noarlunga reef, Glenelg',
+          'Mid-2027 timing — satisfies the ADAS Part 1 prerequisite window before discharge',
+          'Log minimum 10 dives with site notes — you\'re starting your dive log here, in South Australian water',
+          'These certs are the entry ticket to every site that follows'
+        ], 'PADI Advanced Open Water certified with 10+ dives logged, SA coastline'),
+        step('03', 'Build your dive log to 60–80 dives', [
+          'Location: SA coastline — Rapid Bay jetty (one of Australia\'s best shore dives), Port Noarlunga, Aldinga reef',
+          'Every logged dive counts toward ADAS Supervisor eligibility and INA volunteer applications',
+          'Document every dive: location, depth, conditions, marine life, any structures or wreck material',
+          'Going into 2028 with a serious SA log changes how you\'re received at international institutions'
+        ], '60–80 logged dives from SA sites by RAAF discharge'),
+        step('04', 'Contact Flinders Maritime Archaeology department', [
+          'Location: Flinders University, Bedford Park SA — 20 minutes from Edinburgh base',
+          'Go in person if possible — this is a small department and showing up matters',
+          'Ask about 2028 Grad Cert intake, credit recognition from OUA degree, and field season opportunities in the Indo-Pacific',
+          'Flinders has direct links to the Australian National Shipwreck Database and UNESCO maritime networks in Southeast Asia and the Pacific'
+        ], 'Relationship established with Flinders department, 2028 intake pathway confirmed'),
+        step('05', 'Secure DHOAS Tier 2 certificate before discharge', [
+          'Location: ADF Financial Services Centre — process before leaving Edinburgh base',
+          'DHOAS Tier 2 applies to P2 purchase in early 2028, significantly reducing mortgage cost',
+          'Cannot be claimed after separation — this must be done while still in uniform'
+        ], 'DHOAS Tier 2 certificate secured pre-discharge, Adelaide')
+      ]),
+      phase('Phase 2', 'Commercial Diving Certification', 'Oct 2026 → Jan 2028 | Adelaide', [
+        step('06', 'Get PADI Open Water + Advanced certified', [
+          'Location: Adelaide — Rapid Bay jetty, Port Noarlunga reef, Glenelg',
+          'Target May–June 2026 — do this while still posted at Edinburgh, on normal RAAF schedule',
+          'PADI Open Water takes one weekend (~AU$399), Advanced takes one more weekend (~AU$459)',
+          'These certs are the ADAS prerequisite — without them you cannot enrol in any commercial diving course',
+          'Book through Diving Adelaide or Scuba World Adelaide'
+        ], 'PADI Advanced Open Water certified, SA coastline, mid-2026'),
+        step('07', 'Log 10+ dives and complete occupational diving medical', [
+          'Location: Adelaide — SA coastline dive sites, weekends around shift rotations',
+          '10 logged dives within 6 months of ADAS Part 1 enrolment — so target Jul–Sep 2027 for this window',
+          'Occupational diving medical: a hyperbaric medicine assessment under AS/NZS 2299.1, performed by a SPUMS-certified doctor (spums.org.au) — not a standard GP check',
+          'Also complete: First Aid + CPR + O2 Provider certification — required before ADAS enrolment',
+          'Every dive logged here is the foundation of a log that will eventually reach 100 occupational dives across 5 countries'
+        ], '10+ dives logged, SPUMS medical cleared, O2 Provider cert in hand — by mid-2027'),
+        step('08', 'Bank leave and submit discharge paperwork — setting up the ADAS window', [
+          'Location: RAAF Base Edinburgh, Adelaide',
+          'Throughout 2027: bank all annual leave and purchase additional leave via the ADF purchased leave scheme',
+          'Mid-2027: submit discharge paperwork with terminal leave calculated to cover the ADAS Part 1 + Part 2 window (8 weeks total)',
+          'Terminal leave = still on full RAAF pay and allowances but out of uniform — the optimal window to do ADAS at zero income cost',
+          'Confirm with your admin office that terminal leave can be used for external training — no restriction known but ADF admin has nuances worth verifying'
+        ], 'Discharge paperwork submitted, 8 weeks terminal leave locked to cover ADAS, December 2027')
+      ]),
+      phase('Phase 3', 'The Bridge', 'February → April 2028 | Sydney, Australia', [
+        step('09', 'Complete ADAS Part 1 — terminal leave, December 2027', [
+          'Location: UTCSA (Underwater Training Centre SA), Burra, South Australia — still on full RAAF pay during terminal leave',
+          'ADAS = Australian Diver Accreditation Scheme — the national occupational standard required by WHS legislation for all paid diving work in Australia',
+          '4-week course: 21 commercial dives, full-face mask, nil visibility, lifeline comms, emergency rescue drills',
+          'Start date: December 2027 — no earlier. ADAS only begins after end of 2027 at minimum',
+          'Internationally equivalent to UK HSE Part IV — recognised for superyacht and survey work in France, Croatia, Turkey, and across the Mediterranean',
+          'Cost: ~AU$7,500 — covered by terminal leave salary'
+        ], 'ADAS Part 1 certified (Cert IV Hyperbaric Operations), Burra SA, December 2027'),
+        step('10', 'Complete ADAS Part 2 — final weeks of terminal leave, January 2028', [
+          'Location: UTCSA, Burra SA — immediately sequential after Part 1, still on terminal leave pay',
+          'ADAS Part 2 = surface-supply diving to 30m, SSBA qualification — cost ~AU$9,000',
+          'Official RAAF discharge date: January 2028',
+          'Exit the Australian military as a qualified commercial diver with both Part 1 and Part 2 in hand — that combination is rare and immediately employable',
+          'This credential is what gets you onto archaeological survey vessels and superyacht dive programs, not just recreational dive boats'
+        ], 'ADAS Part 1 + Part 2 complete by discharge date, January 2028, Burra SA')
+      ]),
+      phase('Phase 4', 'Mediterranean Bridge Season', 'May → October 2028 | Antibes, France & Mediterranean', [
+        step('11', 'Complete STCW Basic Safety Training', [
+          'Location: Sydney maritime training provider — February 2028, immediately post-discharge',
+          'STCW = Standards of Training, Certification and Watchkeeping — mandatory for paid work on any vessel globally including French-flagged superyachts in Antibes',
+          'Covers: survival at sea, firefighting, first aid at sea, personal safety — one week, ~AU$1,000',
+          'Without STCW you cannot legally be paid crew anywhere in the world'
+        ], 'STCW Basic Safety certificate in hand before departing Australia for France, February 2028'),
+        step('12', 'Attend a Flinders UNESCO UNITWIN field school — Mediterranean or Southeast Asia', [
+          'Location: Mediterranean coast OR Southeast Asia — field schools have run in Turkey, Greece, the Philippines, and Vietnam',
+          'Flinders is a full Member and former Network Coordinator of the UNESCO UNITWIN Network for Underwater Archaeology',
+          'As an enrolled Grad Cert student you\'re eligible — and if you\'re already in the Mediterranean on a yacht, attending costs a flight and a week of leave',
+          'This puts a named UNESCO field credit on your CV before the Masters even begins'
+        ], 'UNESCO UNITWIN field school attended, first international heritage field credit on CV'),
+        step('13', 'Complete MSDS Marine work placement — United Kingdom', [
+          'Location: UK — MSDS Marine operates out of England with projects across the North Sea and British coastline',
+          'Superyacht winters are often in the Canaries or Caribbean — UK is a detour but accessible in the November–February off-season',
+          '2-week placement covering offshore renewables heritage surveys, geophysical survey, and maritime fieldwork',
+          'Directly maps to the offshore energy CRM track — the highest-paying consulting tier',
+          'Builds professional network in the UK heritage sector, which has the most mature UCH consulting market in the world'
+        ], 'MSDS Marine placement complete, UK — offshore survey experience and North Sea contacts established')
+      ]),
+      phase('Phase 5', 'Field Season Rotation', '2029 → 2032 | Mediterranean, Indo-Pacific, East Africa', [
+        step('14', 'Field Season 1 — Turkey, Bodrum (INA base)', [
+          'Location: Bodrum, Turkey — home of the Institute of Nautical Archaeology, the world\'s leading underwater excavation body',
+          'Turkey is the single richest shipwreck zone on earth — Bronze Age, Byzantine, and Ottoman material across the Aegean coast',
+          'Apply as an INA volunteer excavator — they run structured field seasons at active sites',
+          'The Cape Gelidonya and Uluburun wrecks are nearby — Bronze Age trade routes between the Levant and the Aegean, exactly the civilisational-scale material you\'re drawn to',
+          'Build relationships with INA staff — this network opens field director pathways in the 2030s'
+        ], 'INA field season completed, Bodrum Turkey — Bronze Age or Byzantine site excavation credit'),
+        step('15', 'Field Season 2 — Egypt, Thonis-Heracleion', [
+          'Location: Abu Qir Bay, Egypt — site of the submerged city of Thonis-Heracleion',
+          'Thonis-Heracleion was rediscovered in 1999 and is still actively excavated — Greco-Egyptian gods, Ptolemaic-era wrecks, entire temple complexes underwater',
+          'This is ancient Greek and Egyptian civilisation simultaneously, underwater, off the Egyptian coast — exactly the intersection of your stated interests',
+          'Apply through IEASM (Institut Européen d\'Archéologie Sous-Marine) — the team running the site',
+          'Connects directly to your interest in the ancient Egyptians — but you\'re physically in the water above the city'
+        ], 'Egypt field season — Thonis-Heracleion or Abu Qir Bay survey credit'),
+        step('16', 'Field Season 3 — Indo-Pacific, Vietnam or Philippines', [
+          'Location: Vietnam (South China Sea trade routes) or Philippines (Manila galleon routes, Sulu Sea) — ancient Chinese and Southeast Asian trade wrecks, almost entirely unexplored',
+          'This zone is your personal differentiator — almost no Western archaeologists specialise here',
+          'Your Tamil cultural familiarity and IR background (Indo-Pacific geopolitics, postcolonial frameworks) makes you a more effective researcher in this region than most',
+          'Chola dynasty maritime trade routes passed through this exact corridor — the civilisation you\'ve always been drawn to, and you can stand above the sites',
+          'Target organisations: Flinders field seasons, UNESCO Bangkok office, Southeast Asian national heritage bodies'
+        ], 'Indo-Pacific field season — Southeast Asian trade route or Chola-era site, credit on CV'),
+        step('17', 'Field Season 4 — East African Swahili Coast, Kenya or Tanzania', [
+          'Location: Mombasa, Kenya or Kilwa Kisiwani, Tanzania — Swahili Coast heritage zone',
+          'The Swahili Coast was the western edge of the Indian Ocean trade network connecting the Arab world, India (including Chola-era Tamil Nadu), and East Africa — directly connected to your existing interests',
+          'DRASSM (French maritime heritage body) and UNESCO both operate in this corridor',
+          'Almost no Australian archaeologists work here — your geopolitical background and Indo-Pacific IR training are genuine assets in politically complex access negotiations',
+          'The Kenyan and Tanzanian heritage bodies are actively seeking international partnerships'
+        ], 'East African field season — Swahili Coast site, East African heritage network contacts established'),
+        step('18', 'Hit 100 occupational dives — apply for ADAS Supervisor ticket', [
+          'Location: Accumulated across Turkey, Egypt, Mediterranean, Indo-Pacific, East Africa, and Australian field seasons',
+          'ADAS Diver Supervisor qualification: 100 logged occupational dives plus documented experience',
+          'Supervisor ticket opens: dive supervisor roles on expedition vessels, archaeological survey operations, contract supervision at AU$1,200–$1,800/day',
+          'You are now not just in the water — you are running the water operations'
+        ], '100 occupational dives logged across 5+ countries, ADAS Supervisor ticket granted by 2031'),
+        step('19', 'Complete Flinders Masters of Maritime Archaeology', [
+          'Location: Flinders University, Bedford Park SA — field seasons embedded, online units in between',
+          'Advanced Entry means 54 units not 72 — roughly 2 years part-time at one to two units per semester',
+          'By Masters completion you carry: ADAS Part 1 + 2 + Supervisor, 4 international field seasons, Grad Cert + Masters, UNESCO UNITWIN credit, INA field experience, North Sea CRM exposure',
+          'That profile entering the independent practice market in the early 2030s is essentially unmatched in Australia'
+        ], 'Masters of Maritime Archaeology conferred, Flinders University — target 2032')
+      ]),
+      phase('Phase 6', 'Independent Practice', '2032 onwards | Wherever the work is', [
+        step('20', 'Establish independent underwater heritage consulting practice', [
+          'Location: Based from Mediterranean (Portugal Alentejo coast or Greece) — Australia 3–4 times per year',
+          'Contract clients: offshore energy developers, expedition operators, government heritage bodies, maritime museums, NGOs',
+          'Geographic focus: Indo-Pacific corridor, East African Swahili Coast, Mediterranean — the zones you know intimately from field seasons',
+          'Day rate target by year three: AU$1,500–$2,000/day independent — equivalent to AU$250K+ annual income on 150 billable days',
+          'Financial architecture running quietly: Australian properties cash-flowing, portfolio compounding, consulting income covering the lifestyle'
+        ], 'Practice established with three recurring clients, operating location-independently'),
+        step('21', 'Target UNESCO Professional Officer pathway — P-2 application', [
+          'Location: UNESCO Paris HQ or regional offices — Bangkok, Nairobi, Cairo as likely postings based on your field region specialisation',
+          'UN P-2 Junior Professional Officer entry: Master\'s + 2 years professional experience — you exceed both by 2032',
+          'All UN salaries are tax-exempt: P-3 at US$100K tax-free equals approximately AU$140K taxable',
+          'Australia\'s DFAT JPO sponsorship program funds Australian nationals into UN agencies at P-2 — your RAAF service and IR degree makes you a strong DFAT candidate',
+          'Blue Shield emergency missions become accessible at P-level — heritage damage assessments in conflict zones, post-earthquake surveys, exactly the politically complex access environments you\'re suited to'
+        ], 'UNESCO P-2 application submitted or consulting practice generating equivalent income'),
+        step('22', 'Field director on a named excavation', [
+          'Location: Bodrum Turkey (INA), Abu Qir Bay Egypt (IEASM), Fournoi Greece, or Indo-Pacific — the sites you will have spent a decade building relationships at',
+          'The Fournoi archipelago in Greece has one of the densest wreck fields on earth — ongoing excavation, growing fast, INA involved',
+          'Antikythera (the site of the famous mechanism) — active survey work, genuinely world-significant',
+          'Chola dynasty sites in the Palk Strait between Tamil Nadu and Sri Lanka — almost entirely undocumented, your Tamil cultural background is a direct asset',
+          'This is the identity end-state: field director at sites of civilisational significance, brought there by a decade of deliberate movement'
+        ], 'First field director credit on a named, published excavation — your name in the archaeological record')
       ])
     ]
   };
