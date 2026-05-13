@@ -766,7 +766,14 @@ function saveData(data) {
 
 function initData() {
   const existing = loadData();
-  if (existing) return existing;
+  if (existing) {
+    // Seed Maritime plan for existing installs that don't have it yet
+    if (!existing.plans.find(p => p.name === 'Maritime Archaeology Career')) {
+      existing.plans.unshift(buildMaritimePlan());
+      saveData(existing);
+    }
+    return existing;
+  }
   const data = { plans: [buildMaritimePlan(), buildNonprofitPlan()] };
   saveData(data);
   return data;
