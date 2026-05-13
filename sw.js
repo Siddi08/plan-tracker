@@ -1,6 +1,6 @@
 /* Plan Tracker Service Worker
    Bump CACHE_NAME whenever you push a new build — clients will auto-update. */
-const CACHE_NAME = 'plan-tracker-v1';
+const CACHE_NAME = 'plan-tracker-v2';
 const PRECACHE = ['./', './index.html', './manifest.json', './icon.svg'];
 
 // Install: cache core shell, then activate immediately
