@@ -397,6 +397,23 @@
     margin-bottom: 3px;
   }
 
+  /* Track badges (Solarpunk plan) */
+  .step-track-badge {
+    font-size: 0.58rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border-radius: 99px;
+    color: #fff;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+  .track-field   { background: #0F6E56; }
+  .track-linus   { background: #534AB7; }
+  .track-suit    { background: #854F0B; }
+  .track-finance { background: #185FA5; }
+
   /* Add step btn */
   .add-step-btn {
     margin: 0 12px 8px;
@@ -914,8 +931,8 @@ function buildNonprofitPlan() {
 }
 
 function buildSolarpunkPlan() {
-  function step(num, name, bullets, deliverable) {
-    return { id: uid(), num, name, bullets, deliverable, complete: false };
+  function step(num, name, bullets, deliverable, track) {
+    return { id: uid(), num, name, bullets, deliverable, complete: false, track };
   }
   function phase(label, title, duration, steps) {
     return { id: uid(), label, title, duration, steps };
@@ -927,189 +944,175 @@ function buildSolarpunkPlan() {
     description: 'Four integrated tracks — Field work, Linus AI, Exoskeleton Suit, and Finance — building toward a solarpunk world in Africa, the Middle East, and Asia.',
     createdAt: '2026-06-14T00:00:00.000Z',
     phases: [
-      phase('Field — Phase 1', 'Foundation Field Skills', 'Now → Month 6', [
+      phase('Phase 1', 'Foundations', 'Now → Month 8', [
         step('01', 'Permaculture Design Certificate (PDC)', [
           '72hr internationally recognised course',
           'Residential 10-day preferred over online',
           'Covers food, water, energy, soil, community design',
           'Permaculture Research Institute NSW'
-        ], 'PDC certificate — field deployment credential'),
+        ], 'PDC certificate — field deployment credential', 'field'),
         step('02', 'Off-Grid Solar PV Course', [
           'System design and basic installation',
           'TAFE SA or SolarQuotes Academy',
           '2–4 weekends',
           'Most transformative tech in Sub-Saharan Africa + rural Asia'
-        ], 'Solar installation competency'),
+        ], 'Solar installation competency', 'field'),
         step('03', 'WASH Fundamentals', [
           'UNICEF and WHO free online modules',
           'Water, sanitation, hygiene',
           '20–30 hours online',
           'Root cause of most suffering in target regions'
-        ], 'WASH fundamentals certificate (free)'),
+        ], 'WASH fundamentals certificate (free)', 'field'),
         step('04', 'Wilderness First Aid', [
           'Non-negotiable for remote field work',
           'Required by most NGOs before deployment',
           '2–3 day course',
           'Covers trauma, evacuation, emergency care'
-        ], 'WFA certificate — NGO deployment requirement')
-      ]),
-      phase('Linus — Phase 1', 'Core AI Foundation', 'Now → Month 6', [
+        ], 'WFA certificate — NGO deployment requirement', 'field'),
         step('05', 'Python Fundamentals (CS50P)', [
           'Harvard CS50P — free online',
           '8–10 weeks part-time evenings',
           'Gate skill — everything in Linus stack runs on Python',
           'Do not skip to AI frameworks before this'
-        ], 'Python competency — gate skill unlocked'),
+        ], 'Python competency — gate skill unlocked', 'linus'),
         step('06', 'Linux Command Line', [
           'Linux Journey — free online',
           '4–6 weeks evenings',
           'Linus runs on Linux',
           'Terminal fluency for managing services and SSH'
-        ], 'Linux terminal fluency')
-      ]),
-      phase('Suit — Phase 1', 'Electronics Foundation', 'Now → Month 8', [
+        ], 'Linux terminal fluency', 'linus'),
         step('07', 'Arduino & Embedded Electronics', [
           'Arduino Uno starter kit ~$50',
           'Sensors: IMU, flex, pressure',
           'Actuators: servo motors, DC motors',
           'Paul McWhorter YouTube series — free'
-        ], 'Working Arduino projects — foundation of all suit systems'),
+        ], 'Working Arduino projects — foundation of all suit systems', 'suit'),
         step('08', 'Power Management & Solar Integration', [
           'LiFePO4 battery chemistry',
           'Solar charge controllers',
           'Power distribution and efficiency',
           'Overlaps directly with off-grid solar field skill'
-        ], 'Field power system design competency')
+        ], 'Field power system design competency', 'suit')
       ]),
-      phase('Field — Phase 2', 'First Deployment', 'Month 6–12', [
+      phase('Phase 2', 'Build & Deploy', 'Month 4–18', [
         step('09', 'Community Facilitation & PRA', [
           'Participatory Rural Appraisal methodology',
           'FutureLearn — free options available',
           'Learn before departure — critical',
           'Biggest mistake outsiders make is designing without community ownership'
-        ], 'PRA methodology competency — pre-departure'),
+        ], 'PRA methodology competency — pre-departure', 'field'),
         step('10', 'First Skills-Based Deployment', [
           'Target: East Africa, Jordan, or Sri Lanka',
           '4–8 weeks in field',
           'Organisations: Practical Action, Engineers Without Borders, Workaway',
           'PDC + solar skills are the entry credential — not your passport'
-        ], 'First field deployment complete — vision sharpened')
-      ]),
-      phase('Linus — Phase 2', 'AI Intelligence Layer', 'Month 4–10', [
+        ], 'First field deployment complete — vision sharpened', 'field'),
         step('11', 'Ollama — Local LLM Deployment', [
           'Run AI models entirely offline on RPi 5 or mini PC',
           'Llama 3, Mistral, Phi-3 — free open source',
           'ollama.com — install and run first model in an afternoon',
           'No internet required in the field'
-        ], 'Linus brain running offline on field hardware'),
+        ], 'Linus brain running offline on field hardware', 'linus'),
         step('12', 'RAG — Retrieval Augmented Generation', [
           'LlamaIndex library — Python-based, free',
           'Feed Linus your field manuals, project data, community notes',
           'Makes Linus context-specific to your work — not generic AI',
           'This is what makes Linus yours'
-        ], 'Linus querying your personal knowledge base'),
+        ], 'Linus querying your personal knowledge base', 'linus'),
         step('13', 'Voice Interface (Whisper + Piper TTS)', [
           'OpenAI Whisper — open source, runs offline',
           'Piper TTS for voice output',
           'Hands-free operation in field',
           'Both run on Raspberry Pi'
-        ], 'Linus voice-controlled hands-free in field')
-      ]),
-      phase('Suit — Phase 2', 'Mechanical Design', 'Month 6–18', [
+        ], 'Linus voice-controlled hands-free in field', 'linus'),
         step('14', 'Fusion 360 — CAD Design', [
           'Free for personal/hobby use',
           'Design every component before fabricating',
           'Simulate stress, check clearances, export for 3D printing',
           'Lars Christensen YouTube series — best free learning path'
-        ], 'Full suit component designs in Fusion 360'),
+        ], 'Full suit component designs in Fusion 360', 'suit'),
         step('15', 'Materials Science Basics', [
           'Aluminium 6061 — strong, light, machinable',
           'Carbon fibre — stiffness-to-weight',
           'Kevlar — impact resistance',
           'MIT OpenCourseWare — free'
-        ], 'Material selection competency for each suit component'),
+        ], 'Material selection competency for each suit component', 'suit'),
         step('16', '3D Printing & Fabrication', [
           'FDM printing: PLA, PETG, TPU',
           'Makerspace membership for printer + laser + machining access',
           'Rapid prototype every component before committing to final material',
           'Build → test → iterate fast'
-        ], 'First 3D printed suit components prototyped')
+        ], 'First 3D printed suit components prototyped', 'suit')
       ]),
-      phase('Linus — Phase 3', 'Hardware & Mesh Network', 'Month 8–18', [
+      phase('Phase 3', 'Practitioner & Integration', 'Month 8–24', [
         step('17', 'Raspberry Pi 5 + Mini PC Field Setup', [
           'RPi 5 (4GB) for smaller models',
           'Intel N100 mini PC for larger models',
           'Configure, harden, auto-start on boot',
           'Solar charge controller integration'
-        ], 'Linus running on field-hardened solar-powered hardware'),
+        ], 'Linus running on field-hardened solar-powered hardware', 'linus'),
         step('18', 'Meshtastic Mesh Networking', [
           'LoRa radio modules — ~$60 per node',
           'Long-range offline comms across kilometres',
           'No internet or mobile signal required',
           'Python integration with Linus'
-        ], 'Field team connected offline via Linus mesh network')
-      ]),
-      phase('Field — Phase 3', 'Practitioner Level', 'Month 12–24', [
+        ], 'Field team connected offline via Linus mesh network', 'linus'),
         step('19', 'Natural Building Workshop', [
           'Earthship, cob, adobe construction',
           'Local materials — earth, straw, bamboo, recycled tyres',
           'Thermal mass buildings stay cool without electricity',
           'Residential workshop first, then apply in-field'
-        ], 'Natural building competency — field applicable'),
+        ], 'Natural building competency — field applicable', 'field'),
         step('20', 'PM4DEV Certification', [
           'Project Management for Development contexts',
           'Budgets, timelines, stakeholder coordination',
           'Funder reporting skills',
           'Transition from volunteer to programme architect'
-        ], 'PM4DEV certified — programme design capable'),
+        ], 'PM4DEV certified — programme design capable', 'field'),
         step('21', 'Grant Writing & Impact Reporting', [
           'ProBono Australia — free resources',
           'AusAID, UN agencies, private foundations',
           'Turns projects from personal spend to funded programmes',
           'The skill that makes your work self-sustaining'
-        ], 'First grant application submitted')
-      ]),
-      phase('Suit — Phase 3', 'Actuator & Exoskeleton Systems', 'Year 2–4', [
+        ], 'First grant application submitted', 'field'),
         step('22', 'Servo & Actuator Systems', [
           'Electric servo motors for joint assistance',
           'Start with knee and hip — highest load joints in field terrain',
           'OpenExo project (Georgia Tech) — open source reference',
           'Pneumatic actuators for high-force applications'
-        ], 'Working joint-assist prototype on bench'),
+        ], 'Working joint-assist prototype on bench', 'suit'),
         step('23', 'Human Factors & Gait Analysis', [
           'Biomechanics — how the body moves under load',
           'Gait cycles, joint torque, ergonomic fit',
           'Coursera biomechanics courses — free',
           'Getting this wrong means the suit fights your body'
-        ], 'Gait-matched joint design — suit works with body not against it')
+        ], 'Gait-matched joint design — suit works with body not against it', 'suit')
       ]),
-      phase('Linus — Phase 4', 'Suit Brain Integration', 'Month 18–36', [
+      phase('Phase 4', 'Systems Convergence', 'Month 18–36+', [
         step('24', 'ROS 2 — Robot Operating System', [
           'Industry standard robotics framework',
           'Manages sensor data, actuator commands, system comms',
           'Python and C++ based — free open source',
           'Bridge between Linus intelligence and suit physical systems'
-        ], 'Linus commanding suit actuators via ROS 2'),
+        ], 'Linus commanding suit actuators via ROS 2', 'linus'),
         step('25', 'Computer Vision (OpenCV)', [
           'Drone camera feeds processed by Linus in real time',
           'Object detection, terrain mapping, anomaly identification',
           'Python-native, open source, runs on RPi',
           'Linus sees through drone eyes and feeds you relevant intel'
-        ], 'Linus processing live drone video feeds')
-      ]),
-      phase('Suit — Phase 4', 'Drone Integration', 'Year 3–6', [
+        ], 'Linus processing live drone video feeds', 'linus'),
         step('26', 'ArduPilot / PX4 Autonomous Flight', [
           'Open source flight controllers — industry standard',
           'Python MAVLink API — Linus commands drones directly',
           'Autonomous waypoint nav, return-to-suit, sensor relay',
           'Start with off-the-shelf drone before custom builds'
-        ], 'Drones autonomously commanded by Linus'),
+        ], 'Drones autonomously commanded by Linus', 'suit'),
         step('27', 'Compact Folding Drone Airframe', [
           'Custom folding quadcopter fitting suit housing',
           'Fusion 360 airframe design',
           'Carbon fibre frame for minimum weight',
           'Tinywhoop community builds — compact design reference'
-        ], 'Two custom drones housed in suit — deploy and recover autonomously')
+        ], 'Two custom drones housed in suit — deploy and recover autonomously', 'suit')
       ]),
       phase('Finance', 'Funding the Vision — $7K Reality', 'All Years', [
         step('28', 'Year 1 Financial Discipline', [
@@ -1117,19 +1120,19 @@ function buildSolarpunkPlan() {
           'Save $170/month — only financial constraint',
           '$2,000 emergency buffer — untouchable',
           'Do not liquidate shares at any point'
-        ], 'Year 1 fully funded — $9,040 total across all tracks'),
+        ], 'Year 1 fully funded — $9,040 total across all tracks', 'finance'),
         step('29', 'Apply for AVI / UN Volunteers Stipend', [
           'Australian Volunteers International — covers flights + living',
           'UN Volunteers programme — stipend + accommodation',
           'Apply after first deployment complete',
           'Turns Year 2+ field work from personal spend to funded'
-        ], 'Stipend secured — field costs externally funded from Year 2'),
+        ], 'Stipend secured — field costs externally funded from Year 2', 'finance'),
         step('30', 'Build Remote Income Stream', [
           'Python tutoring or freelance — $500–$1,500/month potential',
           'Start after CS50P complete',
           'Funds suit hardware in Years 2–4 (~$4,260 total)',
           'Location-independent — works from field'
-        ], '$500+/month remote income — suit hardware self-funded')
+        ], '$500+/month remote income — suit hardware self-funded', 'finance')
       ])
     ]
   };
@@ -1321,6 +1324,7 @@ let pendingPhaseId = null; // which phase the "add step" modal is targeting
    UTILITIES
 ══════════════════════════════════════════════════════════ */
 const PHASE_COLORS = ['#534AB7', '#0F6E56', '#854F0B', '#993C1D', '#185FA5'];
+const TRACK_LABEL = { field: 'Field', linus: 'Linus', suit: 'Suit', finance: 'Finance' };
 const PHASE_IDX = [0, 1, 2, 3, 4];
 
 function phaseIdx(i) { return i % 5; }
@@ -1487,11 +1491,15 @@ function buildStepEl(step, phaseId, color, ci) {
   card.dataset.stepId = step.id;
 
   const bulletsHtml = step.bullets.map(b => `<li>${esc(b)}</li>`).join('');
+  const trackBadge = step.track
+    ? `<span class="step-track-badge track-${esc(step.track)}">${esc(TRACK_LABEL[step.track] || step.track)}</span>`
+    : '';
 
   card.innerHTML = `
     <div class="step-card-header">
       <div class="step-checkbox${step.complete ? ' checked' : ''}" role="checkbox" aria-checked="${step.complete}" tabindex="0" data-phase-id="${phaseId}" data-step-id="${step.id}"></div>
       <span class="step-num">${esc(step.num)}</span>
+      ${trackBadge}
       <span class="step-name">${esc(step.name)}</span>
       <span class="step-chevron">&#9660;</span>
     </div>
