@@ -772,9 +772,14 @@ function initData() {
       existing.plans.unshift(buildMaritimePlan());
       saveData(existing);
     }
+    // Seed Solarpunk plan for existing installs that don't have it yet
+    if (!existing.plans.find(p => p.name === 'Solarpunk Master Roadmap')) {
+      existing.plans.push(buildSolarpunkPlan());
+      saveData(existing);
+    }
     return existing;
   }
-  const data = { plans: [buildMaritimePlan(), buildNonprofitPlan()] };
+  const data = { plans: [buildMaritimePlan(), buildNonprofitPlan(), buildSolarpunkPlan()] };
   saveData(data);
   return data;
 }
@@ -903,6 +908,228 @@ function buildNonprofitPlan() {
           'AU$2K MRR = ~40 Growth customers or ~14 Organisation customers or a mix',
           'AU$10K MRR target by month 18 = a real business alongside your other income streams'
         ], 'Revenue dashboard showing MRR trend — screenshot it monthly')
+      ])
+    ]
+  };
+}
+
+function buildSolarpunkPlan() {
+  function step(num, name, bullets, deliverable) {
+    return { id: uid(), num, name, bullets, deliverable, complete: false };
+  }
+  function phase(label, title, duration, steps) {
+    return { id: uid(), label, title, duration, steps };
+  }
+
+  return {
+    id: uid(),
+    name: 'Solarpunk Master Roadmap',
+    description: 'Four integrated tracks — Field work, Linus AI, Exoskeleton Suit, and Finance — building toward a solarpunk world in Africa, the Middle East, and Asia.',
+    createdAt: '2026-06-14T00:00:00.000Z',
+    phases: [
+      phase('Field — Phase 1', 'Foundation Field Skills', 'Now → Month 6', [
+        step('01', 'Permaculture Design Certificate (PDC)', [
+          '72hr internationally recognised course',
+          'Residential 10-day preferred over online',
+          'Covers food, water, energy, soil, community design',
+          'Permaculture Research Institute NSW'
+        ], 'PDC certificate — field deployment credential'),
+        step('02', 'Off-Grid Solar PV Course', [
+          'System design and basic installation',
+          'TAFE SA or SolarQuotes Academy',
+          '2–4 weekends',
+          'Most transformative tech in Sub-Saharan Africa + rural Asia'
+        ], 'Solar installation competency'),
+        step('03', 'WASH Fundamentals', [
+          'UNICEF and WHO free online modules',
+          'Water, sanitation, hygiene',
+          '20–30 hours online',
+          'Root cause of most suffering in target regions'
+        ], 'WASH fundamentals certificate (free)'),
+        step('04', 'Wilderness First Aid', [
+          'Non-negotiable for remote field work',
+          'Required by most NGOs before deployment',
+          '2–3 day course',
+          'Covers trauma, evacuation, emergency care'
+        ], 'WFA certificate — NGO deployment requirement')
+      ]),
+      phase('Linus — Phase 1', 'Core AI Foundation', 'Now → Month 6', [
+        step('05', 'Python Fundamentals (CS50P)', [
+          'Harvard CS50P — free online',
+          '8–10 weeks part-time evenings',
+          'Gate skill — everything in Linus stack runs on Python',
+          'Do not skip to AI frameworks before this'
+        ], 'Python competency — gate skill unlocked'),
+        step('06', 'Linux Command Line', [
+          'Linux Journey — free online',
+          '4–6 weeks evenings',
+          'Linus runs on Linux',
+          'Terminal fluency for managing services and SSH'
+        ], 'Linux terminal fluency')
+      ]),
+      phase('Suit — Phase 1', 'Electronics Foundation', 'Now → Month 8', [
+        step('07', 'Arduino & Embedded Electronics', [
+          'Arduino Uno starter kit ~$50',
+          'Sensors: IMU, flex, pressure',
+          'Actuators: servo motors, DC motors',
+          'Paul McWhorter YouTube series — free'
+        ], 'Working Arduino projects — foundation of all suit systems'),
+        step('08', 'Power Management & Solar Integration', [
+          'LiFePO4 battery chemistry',
+          'Solar charge controllers',
+          'Power distribution and efficiency',
+          'Overlaps directly with off-grid solar field skill'
+        ], 'Field power system design competency')
+      ]),
+      phase('Field — Phase 2', 'First Deployment', 'Month 6–12', [
+        step('09', 'Community Facilitation & PRA', [
+          'Participatory Rural Appraisal methodology',
+          'FutureLearn — free options available',
+          'Learn before departure — critical',
+          'Biggest mistake outsiders make is designing without community ownership'
+        ], 'PRA methodology competency — pre-departure'),
+        step('10', 'First Skills-Based Deployment', [
+          'Target: East Africa, Jordan, or Sri Lanka',
+          '4–8 weeks in field',
+          'Organisations: Practical Action, Engineers Without Borders, Workaway',
+          'PDC + solar skills are the entry credential — not your passport'
+        ], 'First field deployment complete — vision sharpened')
+      ]),
+      phase('Linus — Phase 2', 'AI Intelligence Layer', 'Month 4–10', [
+        step('11', 'Ollama — Local LLM Deployment', [
+          'Run AI models entirely offline on RPi 5 or mini PC',
+          'Llama 3, Mistral, Phi-3 — free open source',
+          'ollama.com — install and run first model in an afternoon',
+          'No internet required in the field'
+        ], 'Linus brain running offline on field hardware'),
+        step('12', 'RAG — Retrieval Augmented Generation', [
+          'LlamaIndex library — Python-based, free',
+          'Feed Linus your field manuals, project data, community notes',
+          'Makes Linus context-specific to your work — not generic AI',
+          'This is what makes Linus yours'
+        ], 'Linus querying your personal knowledge base'),
+        step('13', 'Voice Interface (Whisper + Piper TTS)', [
+          'OpenAI Whisper — open source, runs offline',
+          'Piper TTS for voice output',
+          'Hands-free operation in field',
+          'Both run on Raspberry Pi'
+        ], 'Linus voice-controlled hands-free in field')
+      ]),
+      phase('Suit — Phase 2', 'Mechanical Design', 'Month 6–18', [
+        step('14', 'Fusion 360 — CAD Design', [
+          'Free for personal/hobby use',
+          'Design every component before fabricating',
+          'Simulate stress, check clearances, export for 3D printing',
+          'Lars Christensen YouTube series — best free learning path'
+        ], 'Full suit component designs in Fusion 360'),
+        step('15', 'Materials Science Basics', [
+          'Aluminium 6061 — strong, light, machinable',
+          'Carbon fibre — stiffness-to-weight',
+          'Kevlar — impact resistance',
+          'MIT OpenCourseWare — free'
+        ], 'Material selection competency for each suit component'),
+        step('16', '3D Printing & Fabrication', [
+          'FDM printing: PLA, PETG, TPU',
+          'Makerspace membership for printer + laser + machining access',
+          'Rapid prototype every component before committing to final material',
+          'Build → test → iterate fast'
+        ], 'First 3D printed suit components prototyped')
+      ]),
+      phase('Linus — Phase 3', 'Hardware & Mesh Network', 'Month 8–18', [
+        step('17', 'Raspberry Pi 5 + Mini PC Field Setup', [
+          'RPi 5 (4GB) for smaller models',
+          'Intel N100 mini PC for larger models',
+          'Configure, harden, auto-start on boot',
+          'Solar charge controller integration'
+        ], 'Linus running on field-hardened solar-powered hardware'),
+        step('18', 'Meshtastic Mesh Networking', [
+          'LoRa radio modules — ~$60 per node',
+          'Long-range offline comms across kilometres',
+          'No internet or mobile signal required',
+          'Python integration with Linus'
+        ], 'Field team connected offline via Linus mesh network')
+      ]),
+      phase('Field — Phase 3', 'Practitioner Level', 'Month 12–24', [
+        step('19', 'Natural Building Workshop', [
+          'Earthship, cob, adobe construction',
+          'Local materials — earth, straw, bamboo, recycled tyres',
+          'Thermal mass buildings stay cool without electricity',
+          'Residential workshop first, then apply in-field'
+        ], 'Natural building competency — field applicable'),
+        step('20', 'PM4DEV Certification', [
+          'Project Management for Development contexts',
+          'Budgets, timelines, stakeholder coordination',
+          'Funder reporting skills',
+          'Transition from volunteer to programme architect'
+        ], 'PM4DEV certified — programme design capable'),
+        step('21', 'Grant Writing & Impact Reporting', [
+          'ProBono Australia — free resources',
+          'AusAID, UN agencies, private foundations',
+          'Turns projects from personal spend to funded programmes',
+          'The skill that makes your work self-sustaining'
+        ], 'First grant application submitted')
+      ]),
+      phase('Suit — Phase 3', 'Actuator & Exoskeleton Systems', 'Year 2–4', [
+        step('22', 'Servo & Actuator Systems', [
+          'Electric servo motors for joint assistance',
+          'Start with knee and hip — highest load joints in field terrain',
+          'OpenExo project (Georgia Tech) — open source reference',
+          'Pneumatic actuators for high-force applications'
+        ], 'Working joint-assist prototype on bench'),
+        step('23', 'Human Factors & Gait Analysis', [
+          'Biomechanics — how the body moves under load',
+          'Gait cycles, joint torque, ergonomic fit',
+          'Coursera biomechanics courses — free',
+          'Getting this wrong means the suit fights your body'
+        ], 'Gait-matched joint design — suit works with body not against it')
+      ]),
+      phase('Linus — Phase 4', 'Suit Brain Integration', 'Month 18–36', [
+        step('24', 'ROS 2 — Robot Operating System', [
+          'Industry standard robotics framework',
+          'Manages sensor data, actuator commands, system comms',
+          'Python and C++ based — free open source',
+          'Bridge between Linus intelligence and suit physical systems'
+        ], 'Linus commanding suit actuators via ROS 2'),
+        step('25', 'Computer Vision (OpenCV)', [
+          'Drone camera feeds processed by Linus in real time',
+          'Object detection, terrain mapping, anomaly identification',
+          'Python-native, open source, runs on RPi',
+          'Linus sees through drone eyes and feeds you relevant intel'
+        ], 'Linus processing live drone video feeds')
+      ]),
+      phase('Suit — Phase 4', 'Drone Integration', 'Year 3–6', [
+        step('26', 'ArduPilot / PX4 Autonomous Flight', [
+          'Open source flight controllers — industry standard',
+          'Python MAVLink API — Linus commands drones directly',
+          'Autonomous waypoint nav, return-to-suit, sensor relay',
+          'Start with off-the-shelf drone before custom builds'
+        ], 'Drones autonomously commanded by Linus'),
+        step('27', 'Compact Folding Drone Airframe', [
+          'Custom folding quadcopter fitting suit housing',
+          'Fusion 360 airframe design',
+          'Carbon fibre frame for minimum weight',
+          'Tinywhoop community builds — compact design reference'
+        ], 'Two custom drones housed in suit — deploy and recover autonomously')
+      ]),
+      phase('Finance', 'Funding the Vision — $7K Reality', 'All Years', [
+        step('28', 'Year 1 Financial Discipline', [
+          'Stay employed through Month 6 minimum',
+          'Save $170/month — only financial constraint',
+          '$2,000 emergency buffer — untouchable',
+          'Do not liquidate shares at any point'
+        ], 'Year 1 fully funded — $9,040 total across all tracks'),
+        step('29', 'Apply for AVI / UN Volunteers Stipend', [
+          'Australian Volunteers International — covers flights + living',
+          'UN Volunteers programme — stipend + accommodation',
+          'Apply after first deployment complete',
+          'Turns Year 2+ field work from personal spend to funded'
+        ], 'Stipend secured — field costs externally funded from Year 2'),
+        step('30', 'Build Remote Income Stream', [
+          'Python tutoring or freelance — $500–$1,500/month potential',
+          'Start after CS50P complete',
+          'Funds suit hardware in Years 2–4 (~$4,260 total)',
+          'Location-independent — works from field'
+        ], '$500+/month remote income — suit hardware self-funded')
       ])
     ]
   };
